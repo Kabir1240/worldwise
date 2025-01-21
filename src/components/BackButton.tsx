@@ -7,8 +7,8 @@ export default function BackButton() {
   return (
     <Button
       type="back"
-      onClick={(e): void => {
-        e.preventDefault();
+      onClick={(event): void => {
+        event.preventDefault();
         navigate(-1)
       }} >
         &larr; Back

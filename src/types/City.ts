@@ -13,21 +13,17 @@ interface City {
   position: Position
 }
 
-const getDefaultCity = () => {
-  return ({
-        cityName: "",
-        country: "",
-        date: "",
-        emoji: "",
-        id: "",
-        notes: "",
-        position: {
-          lat: 1,
-          lng: 1
-        }
-      })
+interface newCity {
+  id?: string,
+  cityName: string,
+  country: string,
+  date: string,
+  emoji: string,
+  notes: string,
+  position: Position
 }
 
-export { getDefaultCity }
+// export { getDefaultCity }
 export type { City }
+export type { newCity }
 export type { Position }

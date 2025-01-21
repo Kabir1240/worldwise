@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { City } from "../types/City"
 import styles from './CityItem.module.css'
 import { useCities } from "../hooks/useCities"
+import React from "react"
 
 
 type CityItem = {
@@ -9,7 +10,7 @@ type CityItem = {
 }
 
 export default function CityItem({ city }: CityItem) {
-  const { currentCity } = useCities();
+  const { currentCity, deleteCity } = useCities();
 
   const { 
     id,
@@ -26,18 +27,23 @@ export default function CityItem({ city }: CityItem) {
       year: "numeric",
     }).format(new Date(date));
   
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    deleteCity(id)
+   }
+  
   return (
     <li >
       <Link
         className={`${styles.cityItem} ${
-          city.id === currentCity.id ?
+          city.id === currentCity?.id ?
           styles['cityItem--active'] :
             ""}`}
         to={`${id}?lat=${position.lat}&lng=${position.lng}`} >
         <span className={styles.emoji}>{emoji}</span>
         <h3 className={styles.name}>{cityName}</h3>
         <time className={styles.date}>{formatDate(date)}</time>
-        <button className={styles.deleteBtn}>&times;</button>
+        <button className={styles.deleteBtn} onClick={handleDelete}>&times;</button>
       </Link>
     </li>
   )

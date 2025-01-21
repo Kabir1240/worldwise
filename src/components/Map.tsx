@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from './Map.module.css'
 import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import { useEffect, useState } from 'react';
@@ -6,10 +6,10 @@ import { useCities } from '../hooks/useCities';
 import { useGeolocation } from '../hooks/useGeolocation'
 import MapMarker from './MapMarker';
 import Button from './Button';
+import useUrlPosition from '../hooks/useUrlPosition';
 
 
 export default function Map() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [mapPosition, setMapPosition] = useState<[number, number]>([51.505, -0.09]);
   const { cities } = useCities();
   const {
@@ -18,8 +18,7 @@ export default function Map() {
     isLoading: isGeolocationLoading 
   } = useGeolocation();
 
-  const mapLong = searchParams.get('lng');
-  const mapLat = searchParams.get('lat');
+  const [mapLat, mapLong] = useUrlPosition();
 
   useEffect(() => {
     if(mapLong && mapLat) setMapPosition([Number(mapLat), Number(mapLong)])
@@ -31,8 +30,8 @@ export default function Map() {
 
   return (
     <div className={styles.mapContainer} >
-      <Button type="position" onClick={{getGeolocationPosition}}>
-
+      <Button type="position" onClick={ getGeolocationPosition }>
+        { isGeolocationLoading ? "loading..." : "Use Your Position" }
       </Button>
       <MapContainer
         className={styles.map}
@@ -54,7 +53,7 @@ export default function Map() {
   )
 }
 
-function ChangeCenter({ position }: {position: [number, number]}) {
+function ChangeCenter({ position }: { position: [number, number] }) {
   const map = useMap();
   map.setView(position);
   return null
