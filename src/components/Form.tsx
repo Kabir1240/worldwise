@@ -1,4 +1,5 @@
 // "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=0&longitude=0"
+// require('dotenv').config()
 
 import { useEffect, useState } from "react";
 
@@ -14,7 +15,8 @@ import { useCities } from "../hooks/useCities";
 import { newCity } from "../types/City";
 import { useNavigate } from "react-router-dom";
 
-export function convertToEmoji(countryCode) {
+function convertToEmoji(countryCode: string): string{
+  // console.log(countryCode);
   const codePoints = countryCode
     .toUpperCase()
     .split("")
@@ -22,7 +24,8 @@ export function convertToEmoji(countryCode) {
   return String.fromCodePoint(...codePoints);
 }
 
-const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client"
+const BASE_URL = "https://api.geoapify.com/v1/geocode/reverse"
+const API_KEY = process.env.REACT_APP_GEOAPIFY_API_KEY;
 
 function Form() {
   const [isGeocodingLoading, setIsGeocodingLoading] = useState<boolean>(false);
@@ -43,14 +46,16 @@ function Form() {
       try {
         setGeocodingError("")
         setIsGeocodingLoading(true);
-        const response = await fetch(`${BASE_URL}?latitude=${mapLat}&longitude=${mapLong}`);
+        const response = await fetch(`${BASE_URL}?lat=${mapLat}&lon=${mapLong}&apiKey=${API_KEY}`);
         const data = await response.json()
+        // extracts relevant data from the API call.
+        const region_data = data["features"][0]["properties"]
         
-        console.log(data);
-        if(!data.countryName) setGeocodingError("That doesn't seem to be a country, please click somewhere else 😭")
-        setCityName(data.city || data.locality || "")
-        setCountry(data.countryName)
-        setEmoji(convertToEmoji(data.countryCode))
+        // console.log(region_data);
+        if(!region_data.country) setGeocodingError("That doesn't seem to be a country, please click somewhere else 😭")
+        setCityName(region_data.city || region_data.region || region_data.state || "")
+        setCountry(region_data.country)
+        setEmoji(convertToEmoji(region_data.country_code))
       } catch (error) { 
         if (error instanceof Error){
           setGeocodingError(error.message)
@@ -63,7 +68,7 @@ function Form() {
     fetchCityData();
   }, [mapLat, mapLong])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     const newCity: newCity = {
       cityName: cityName,
