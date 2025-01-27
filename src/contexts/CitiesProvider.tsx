@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { City as CityInterface, newCity } from "../types/City"
 
@@ -140,7 +140,7 @@ function CityProvider({ children }: CityProviderProps): JSX.Element {
     fetchCities()
   }, [])
   
-  const getCity = async (id: string): Promise<void> => {
+  const getCity = useCallback(async (id: string): Promise<void> => {
     if (id === currentCity?.id) return;
 
     stateManager({ type: "loading"})
@@ -151,7 +151,7 @@ function CityProvider({ children }: CityProviderProps): JSX.Element {
     } catch { 
       stateManager({ type: 'rejected', payload: "Error retrieving city "})
     }
-  }
+  }, [currentCity?.id])
   
   const createCity = async (newCity: newCity): Promise<void> => {
     stateManager({ type: "loading"})

@@ -20,12 +20,12 @@ function convertToEmoji(countryCode: string): string{
   const codePoints = countryCode
     .toUpperCase()
     .split("")
-    .map((char) => 127397 + char.charCodeAt());
+    .map((char) => 127397 + char.charCodeAt(0));
   return String.fromCodePoint(...codePoints);
 }
 
 const BASE_URL = "https://api.geoapify.com/v1/geocode/reverse"
-const API_KEY = process.env.REACT_APP_GEOAPIFY_API_KEY;
+const API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
 function Form() {
   const [isGeocodingLoading, setIsGeocodingLoading] = useState<boolean>(false);

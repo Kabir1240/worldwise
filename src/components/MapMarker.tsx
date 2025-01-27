@@ -6,7 +6,7 @@ type MapMarkerProps = {
 }
 
 export default function MapMarker({ city }: MapMarkerProps): JSX.Element {
-  const mapPosition = [city.position['lat'], city.position['lng']]
+  const mapPosition: [number, number] = [city.position['lat'], city.position['lng']]
   return (
     <Marker position={mapPosition}>
       <Popup>
